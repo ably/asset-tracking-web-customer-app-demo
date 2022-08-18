@@ -5,40 +5,10 @@ const driverPresent = 'Driver is online';
 const noDrivers = 'Driver is offline';
 
 interface HeaderProps {
-  subscriber: Subscriber;
+  children?: JSX.Element;
 }
 
-const Header = ({ subscriber }: HeaderProps) => {
-  const [inputText, setInputText] = useState('');
-  const [trackingId, setTrackingId] = useState<null | string>(null);
-  const [driverStatus, setDriverStatus] = useState(noDrivers);
-  const tracking = useRef(false);
-
-  useEffect(() => {
-    (subscriber as any).onStatusUpdate = (isOnline: boolean) => {
-      setDriverStatus(isOnline ? driverPresent : noDrivers);
-    };
-  }, [subscriber]);
-
-  useEffect(() => {
-    async function effect() {
-      if (trackingId) {
-        if (tracking) {
-          await subscriber.stop();
-        }
-        subscriber.start(trackingId);
-        tracking.current = false;
-      }
-    }
-
-    effect();
-  }, [trackingId, subscriber, tracking]);
-
-  function onSubmit(evt: FormEvent<HTMLFormElement>) {
-    evt.preventDefault();
-    setTrackingId(inputText);
-  }
-
+const Header = ({ children }: HeaderProps) => {
   return (
     <header>
       <h1>
@@ -47,26 +17,30 @@ const Header = ({ subscriber }: HeaderProps) => {
         </a>
         <span className="title">Asset Tracking</span>
       </h1>
-      <div id="channel">
-        <label htmlFor="channelID" className="label">
-          Tracking ID:
-        </label>
-        <form onSubmit={onSubmit}>
-          <input
-            type="text"
-            name="channelID"
-            id="channelID"
-            placeholder="Enter a Channel ID"
-            className="input"
-            value={inputText}
-            onChange={(evt) => setInputText(evt.target.value)}
-          />
-        </form>
-        <h2 className="subscribers" id="subscriberCount">
-          {driverStatus}
-        </h2>
-      </div>
+      {children}
     </header>
+  );
+};
+
+interface DriverStatusProps {
+  subscriber: Subscriber;
+}
+
+export const DriverStatus = ({ subscriber }: DriverStatusProps) => {
+  const [driverStatus, setDriverStatus] = useState(noDrivers);
+
+  useEffect(() => {
+    (subscriber as any).onStatusUpdate = (isOnline: boolean) => {
+      setDriverStatus(isOnline ? driverPresent : noDrivers);
+    };
+  }, [subscriber]);
+
+  return (
+    <div id="channel">
+      <h2 className="subscribers" id="subscriberCount">
+        {driverStatus}
+      </h2>
+    </div>
   );
 };
 
