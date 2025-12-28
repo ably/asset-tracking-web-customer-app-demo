@@ -13,7 +13,7 @@
   "dependencies": {
     "@ably/asset-tracking": "^1.0.0-beta.4",
     "@googlemaps/react-wrapper": "^1.1.35",
-    "next": "12.2.3",
+    "next": "13.5.4",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
